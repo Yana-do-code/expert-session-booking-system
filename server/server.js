@@ -34,25 +34,6 @@ app.get('/', (req, res) => {
   res.json({ message: 'Expert Booking API is running' });
 });
 
-// Email test route — dev only, remove before production
-app.get('/test-email', async (req, res) => {
-  const { sendBookingConfirmation } = require('./utils/mailer');
-  try {
-    await sendBookingConfirmation({
-      to: process.env.EMAIL_USER,
-      name: 'Test User',
-      expert: { name: 'Pt. Ashok Tiwari', category: 'Vedic Astrology', hourlyRate: 3500 },
-      date: '2026-05-10',
-      startTime: '10:00',
-      endTime: '11:00',
-      hourlyRate: 3500,
-    });
-    res.json({ message: 'Test email sent to ' + process.env.EMAIL_USER });
-  } catch (err) {
-    res.status(500).json({ message: 'Email failed', error: err.message });
-  }
-});
-
 // API routes
 app.use('/api/experts', expertRoutes);
 app.use('/api/slots', slotRoutes);
