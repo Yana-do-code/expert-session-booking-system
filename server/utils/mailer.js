@@ -1,12 +1,14 @@
 const nodemailer = require('nodemailer');
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+function createTransporter() {
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+}
 
 function formatDate(dateStr) {
   if (!dateStr) return dateStr;
@@ -113,7 +115,7 @@ async function sendBookingConfirmation({ to, name, expert, date, startTime, endT
 </body>
 </html>`;
 
-  await transporter.sendMail({
+  await createTransporter().sendMail({
     from: `"Vedaz Astrology" <${process.env.EMAIL_USER}>`,
     to,
     subject: `Booking Confirmed – ${expert.name} on ${formattedDate}`,
