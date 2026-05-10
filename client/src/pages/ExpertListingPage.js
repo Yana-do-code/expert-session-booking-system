@@ -22,6 +22,13 @@ const styles = {
   header: {
     marginBottom: 24,
   },
+  headerRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 16,
+    flexWrap: 'wrap',
+  },
   title: {
     fontSize: 28,
     fontWeight: 700,
@@ -32,6 +39,16 @@ const styles = {
     fontSize: 14,
     color: '#6b7280',
     marginTop: 6,
+  },
+  myBookingsBtn: {
+    border: '1px solid #4f46e5',
+    color: '#4f46e5',
+    background: 'transparent',
+    borderRadius: 8,
+    padding: '8px 16px',
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: 'pointer',
   },
   controls: {
     display: 'flex',
@@ -76,7 +93,7 @@ const styles = {
 
 const spinnerKeyframes = `@keyframes expertSpin { to { transform: rotate(360deg); } }`;
 
-function ExpertListingPage({ onSelectExpert }) {
+function ExpertListingPage({ onSelectExpert, onMyBookings }) {
   const [experts, setExperts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -125,10 +142,23 @@ function ExpertListingPage({ onSelectExpert }) {
       <style>{spinnerKeyframes}</style>
       <div style={styles.container}>
         <header style={styles.header}>
-          <h1 style={styles.title}>Find an Expert</h1>
-          <p style={styles.subtitle}>
-            Browse and book sessions with vetted experts across multiple domains.
-          </p>
+          <div style={styles.headerRow}>
+            <div>
+              <h1 style={styles.title}>Find an Expert</h1>
+              <p style={styles.subtitle}>
+                Browse and book sessions with vetted experts across multiple domains.
+              </p>
+            </div>
+            {onMyBookings && (
+              <button
+                type="button"
+                style={styles.myBookingsBtn}
+                onClick={onMyBookings}
+              >
+                My Bookings
+              </button>
+            )}
+          </div>
         </header>
 
         <div style={styles.controls}>

@@ -132,4 +132,69 @@ const createBooking = async (req, res) => {
   }
 };
 
-module.exports = { createBooking };
+// GET /api/bookings?email=
+// Returns all bookings made by the given email, newest first, with the
+// linked expert populated for display purposes. An empty array means
+// the email has never booked — that is not a 404.
+const getBookingsByEmail = async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email || typeof email !== 'string' || !email.trim()) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    const normalized = email.trim().toLowerCase();
+    if (!EMAIL_RE.test(normalized)) {
+      return res.status(400).json({ message: 'Enter a valid email address' });
+    }
+
+    const bookings = await Booking.find({ email: normalized })
+      .populate('expert', 'name category hourlyRate')
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json(bookings);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: 'Failed to fetch bookings', error: err.message });
+  }
+};
+
+// PATCH /api/bookings/:id/status
+// Body: { status }
+// Status updates are not real-time — no socket emit on success.
+const ALLOWED_STATUSES = ['pending', 'confirmed', 'completed'];
+
+const updateBookingStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body || {};
+
+    if (!id || !isValidObjectId(id)) {
+      return res.status(400).json({ message: 'Invalid booking id' });
+    }
+
+    if (!status || !ALLOWED_STATUSES.includes(status)) {
+      return res.status(400).json({
+        message: `Status must be one of: ${ALLOWED_STATUSES.join(', ')}`,
+      });
+    }
+
+    const booking = await Booking.findById(id);
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    booking.status = status;
+    await booking.save();
+
+    return res.status(200).json(booking);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: 'Failed to update booking status', error: err.message });
+  }
+};
+
+module.exports = { createBooking, getBookingsByEmail, updateBookingStatus };
