@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CATEGORIES = ['All', 'Technology', 'Business', 'Design', 'Marketing', 'Finance', 'Health'];
+const CATEGORIES = ['All', 'Vedic Astrology', 'Tarot', 'Numerology', 'Vastu Shastra', 'Palmistry', 'Puja Services', 'Horoscope'];
 
 const styles = {
   wrapper: {

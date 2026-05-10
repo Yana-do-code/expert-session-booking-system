@@ -10,7 +10,7 @@ const expertSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ['Technology', 'Business', 'Design', 'Marketing', 'Finance', 'Health'],
+      enum: ['Vedic Astrology', 'Tarot', 'Numerology', 'Vastu Shastra', 'Palmistry', 'Puja Services', 'Horoscope'],
     },
     experience: {
       type: Number,
