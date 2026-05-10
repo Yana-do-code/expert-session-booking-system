@@ -8,7 +8,7 @@ A full-stack real-time booking platform for Vedaz, the AI-powered astrology plat
 
 | Layer | Tech |
 |---|---|
-| Backend | Node.js, Express, MongoDB (Mongoose), Socket.io |
+| Backend | Node.js, Express, MongoDB (Mongoose), Socket.io, Nodemailer |
 | Frontend | React (CRA), Axios, Socket.io-client |
 | Database | MongoDB Atlas |
 
@@ -21,6 +21,7 @@ server/
 ├── models/          Expert, TimeSlot, Booking
 ├── controllers/     expertController, slotController, bookingController
 ├── routes/          expertRoutes, slotRoutes, bookingRoutes
+├── utils/           mailer.js (Nodemailer + Gmail SMTP)
 └── server.js        Express + Socket.io entry point
 
 client/src/
@@ -54,6 +55,12 @@ client/src/
 - Look up all bookings by email
 - Each booking shows expert, date, time, rate, and color-coded status
 - Status can be updated inline: Pending → Confirmed → Completed
+
+### 5. Email Confirmation
+- A branded HTML confirmation email is sent to the booker's email address immediately after a successful booking
+- Email includes: expert name, category, date, time slot, and ₹/hr rate
+- Powered by Nodemailer + Gmail SMTP
+- Fire-and-forget — email failure never blocks or rolls back a confirmed booking
 
 ---
 
@@ -103,7 +110,10 @@ npm start             # runs on port 3000
 PORT=5000
 MONGO_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_jwt_secret
+EMAIL_USER=your_gmail@gmail.com
+EMAIL_PASS=your_gmail_app_password
 ```
+> `EMAIL_PASS` must be a Gmail **App Password** (not your account password). Enable 2-Step Verification on your Google account, then generate one at Google Account → Security → App Passwords.
 
 ### Seed data
 ```bash

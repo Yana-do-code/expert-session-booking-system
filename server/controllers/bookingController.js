@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const TimeSlot = require('../models/TimeSlot');
 const Booking = require('../models/Booking');
+const Expert = require('../models/Expert');
+const { sendBookingConfirmation } = require('../utils/mailer');
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -123,6 +125,24 @@ const createBooking = async (req, res) => {
         expertId: String(claimedSlot.expert),
       });
     }
+
+    // Send confirmation email — fire-and-forget so a mail failure never
+    // blocks or rolls back an already-confirmed booking.
+    Expert.findById(expertId, 'name category hourlyRate')
+      .then((expertDoc) => {
+        if (expertDoc) {
+          return sendBookingConfirmation({
+            to: booking.email,
+            name: booking.name,
+            expert: expertDoc,
+            date: booking.date,
+            startTime: booking.startTime,
+            endTime: booking.endTime,
+            hourlyRate: expertDoc.hourlyRate,
+          });
+        }
+      })
+      .catch((err) => console.error('Confirmation email failed:', err.message));
 
     return res.status(201).json(booking);
   } catch (err) {
